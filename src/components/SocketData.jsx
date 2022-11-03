@@ -64,7 +64,7 @@ const SocketData = ({
 
   useEffect(() => {
     if (lastJsonMessage && setBinanceDiff && setWazirXDiff) {
-      console.log(brokerName, "'s last message: ", lastJsonMessage)
+      // console.log(brokerName, "'s last message: ", lastJsonMessage)
 
       if (brokerName === "Binance" && lastJsonMessage.a && lastJsonMessage.b) {
         setAskDiff(lastJsonMessage.a)
