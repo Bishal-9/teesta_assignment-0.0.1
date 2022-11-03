@@ -12,6 +12,7 @@ const SocketData = ({
   unsubscribePayload,
 }) => {
   const { pair } = usePairStore()
+  const oldPairUnsubscribePayload = useRef(unsubscribePayload)
   const oldPair = useRef(pair)
   const isSubscribed = useRef(false)
   const { setBinanceDiff } = useBinanceStore()
@@ -38,10 +39,10 @@ const SocketData = ({
 
   // * Memoize the unsubscribe function to avoid unnecessary re-renders
   const unsubscribe = useCallback(() => {
-    if (sendJsonMessage && unsubscribePayload) {
-      sendJsonMessage(unsubscribePayload)
+    if (sendJsonMessage && oldPairUnsubscribePayload) {
+      sendJsonMessage(oldPairUnsubscribePayload.current)
     }
-  }, [sendJsonMessage, unsubscribePayload])
+  }, [sendJsonMessage, oldPairUnsubscribePayload])
 
   // * Subscribe to the socket when the component mounts and memoize the connection
   useMemo(() => {
@@ -57,12 +58,13 @@ const SocketData = ({
       unsubscribe()
       subscribe()
       oldPair.current = pair
+      oldPairUnsubscribePayload.current = unsubscribePayload
     }
-  }, [pair, oldPair, unsubscribe, subscribe])
+  }, [pair, oldPair, unsubscribe, subscribe, unsubscribePayload])
 
   useEffect(() => {
     if (lastJsonMessage && setBinanceDiff && setWazirXDiff) {
-      // console.log(brokerName, "'s last message: ", lastJsonMessage)
+      console.log(brokerName, "'s last message: ", lastJsonMessage)
 
       if (brokerName === "Binance" && lastJsonMessage.a && lastJsonMessage.b) {
         setAskDiff(lastJsonMessage.a)
